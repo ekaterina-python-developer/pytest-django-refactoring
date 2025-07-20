@@ -1,11 +1,10 @@
 from http import HTTPStatus
 
-from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 
-from .constants import (
+from .test_mixins import (
+    BaseTestData,
     HOME_URL,
-    LOGIN_URL,
     NOTE_ADD_URL,
     NOTE_DELETE_URL,
     NOTE_DETAIL_URL,
@@ -13,9 +12,6 @@ from .constants import (
     NOTE_SUCCESS_URL,
     NOTES_LIST_URL,
 )
-from .test_mixins import BaseTestData
-
-User = get_user_model()
 
 
 class TestRoutes(BaseTestData):
@@ -25,11 +21,11 @@ class TestRoutes(BaseTestData):
         """Тестирование доступности страниц с разными методами."""
         test_cases = [
             # Публичные GET-страницы
-            ('GET', HOME_URL, self.anonymous_client, HTTPStatus.OK),
+            ('GET', HOME_URL, self.client, HTTPStatus.OK),
             ('GET', reverse_lazy('users:login'),
-             self.anonymous_client, HTTPStatus.OK),
+             self.client, HTTPStatus.OK),
             ('GET', reverse_lazy('users:signup'),
-             self.anonymous_client, HTTPStatus.OK),
+             self.client, HTTPStatus.OK),
 
             # Приватные GET-страницы для автора
             ('GET', NOTE_ADD_URL, self.author_client, HTTPStatus.OK),
@@ -45,26 +41,24 @@ class TestRoutes(BaseTestData):
 
             # POST-запрос (например, logout)
             ('POST', reverse_lazy('users:logout'),
-             self.anonymous_client, HTTPStatus.OK),
+             self.client, HTTPStatus.OK),
         ]
 
         for method, url, client, expected_status in test_cases:
             with self.subTest(method=method, url=url):
-                response = getattr(client, method.lower())(url)
+                response = client.generic(method, url)
                 self.assertEqual(response.status_code, expected_status)
 
     def test_redirects_for_anonymous(self):
         """Тестирование редиректов для анонимных пользователей."""
         test_cases = [
-            (NOTE_EDIT_URL, f'{LOGIN_URL}?next={NOTE_EDIT_URL}'),
-            (NOTE_DELETE_URL, f'{LOGIN_URL}?next={NOTE_DELETE_URL}'),
+            (self.NOTE_EDIT_URL, self.REDIRECT_AFTER_LOGIN['edit']),
+            (self.NOTE_DELETE_URL, self.REDIRECT_AFTER_LOGIN['delete']),
         ]
 
         for url, redirect_url in test_cases:
             with self.subTest(url=url):
                 self.assertRedirects(
-                    self.anonymous_client.get(url),
-                    redirect_url,
-                    status_code=HTTPStatus.FOUND,
-                    target_status_code=HTTPStatus.OK
+                    self.client.get(url),
+                    redirect_url
                 )

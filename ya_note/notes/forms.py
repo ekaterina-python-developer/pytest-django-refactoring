@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 
 from .models import Note
 
+
 WARNING = ' - такой slug уже существует, придумайте уникальное значение!'
 
 

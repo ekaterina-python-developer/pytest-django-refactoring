@@ -1,12 +1,14 @@
 from notes.forms import NoteForm
 
-from .constants import (
+from .test_mixins import (
+    BaseTestData,
     NOTE_ADD_URL,
     NOTE_EDIT_URL,
-    NOTE_SLUG,
     NOTES_LIST_URL,
+    NOTE_TITLE,
+    NOTE_TEXT,
+    NOTE_SLUG,
 )
-from .test_mixins import BaseTestData
 
 
 class TestNotesListForDifferentUsers(BaseTestData):
@@ -16,11 +18,10 @@ class TestNotesListForDifferentUsers(BaseTestData):
         """Автор видит свою заметку в списке."""
         response = self.author_client.get(NOTES_LIST_URL)
         self.assertIn(self.note, response.context['object_list'])
-        notes = response.context['object_list'].get(slug=NOTE_SLUG)
-        self.assertEqual(notes.title, self.note.title)
-        self.assertEqual(notes.text, self.note.text)
-        self.assertEqual(notes.slug, self.note.slug)
-        self.assertEqual(notes.author, self.note.author)
+        self.assertEqual(self.note.title, NOTE_TITLE)
+        self.assertEqual(self.note.text, NOTE_TEXT)
+        self.assertEqual(self.note.slug, NOTE_SLUG)
+        self.assertEqual(self.note.author, self.author)
 
     def test_not_author_doesnt_see_note(self):
         """Другой пользователь не видит чужую заметку."""
@@ -40,5 +41,4 @@ class TestPagesContainsForm(BaseTestData):
         for url in urls:
             with self.subTest(url=url):
                 response = self.author_client.get(url)
-                form = response.context.get('form')
-                self.assertIsInstance(form, NoteForm)
+                self.assertIsInstance(response.context.get('form'), NoteForm)
