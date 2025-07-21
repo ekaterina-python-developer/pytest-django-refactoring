@@ -44,10 +44,6 @@ class BaseTestData(TestCase):
         cls.not_author_client = Client()
         cls.not_author_client.force_login(cls.not_author)
 
-        cls.reader = User.objects.create(username='Читатель')
-        cls.reader_client = Client()
-        cls.reader_client.force_login(cls.reader)
-
         cls.note = Note.objects.create(
             title='Заголовок',
             text='Текст',

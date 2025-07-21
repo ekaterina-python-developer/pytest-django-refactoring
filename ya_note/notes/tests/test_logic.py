@@ -1,6 +1,5 @@
 from http import HTTPStatus
 
-from pytils.translit import slugify
 
 from notes.models import Note
 from .test_mixins import (
@@ -65,7 +64,7 @@ class TestNoteOperations(BaseTestData):
 
     def test_user_cannot_edit_others_note(self):
         """Пользователь не может редактировать чужую заметку."""
-        response = self.reader_client.post(
+        response = self.not_author_client.post(
             NOTE_EDIT_URL,
             data=self.form_data
         )
@@ -88,7 +87,7 @@ class TestNoteOperations(BaseTestData):
     def test_user_cannot_delete_others_note(self):
         """Пользователь не может удалить чужую заметку."""
         initial_count = Note.objects.count()
-        response = self.reader_client.delete(NOTE_DELETE_URL)
+        response = self.not_author_client.delete(NOTE_DELETE_URL)
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
         self.assertEqual(Note.objects.count(), initial_count)
         self.assertTrue(Note.objects.filter(pk=self.note.pk).exists())

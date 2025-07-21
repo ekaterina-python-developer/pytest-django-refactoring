@@ -37,8 +37,18 @@ class TestRoutes(BaseTestData):
             ('GET', NOTE_SUCCESS_URL, self.author_client, HTTPStatus.OK),
 
             # GET-доступ для читателя (должен быть запрещён)
-            ('GET', NOTE_EDIT_URL, self.reader_client, HTTPStatus.NOT_FOUND),
-            ('GET', NOTE_DELETE_URL, self.reader_client, HTTPStatus.NOT_FOUND),
+            (
+                'GET',
+                NOTE_EDIT_URL,
+                self.not_author_client,
+                HTTPStatus.NOT_FOUND
+            ),
+            (
+                'GET',
+                NOTE_DELETE_URL,
+                self.not_author_client,
+                HTTPStatus.NOT_FOUND
+            ),
 
             # POST-запрос (например, logout)
             ('POST', reverse_lazy('users:logout'),
