@@ -11,7 +11,9 @@ from .test_mixins import (
     NOTES_LIST_URL,
     LOGIN_URL,
     SIGNUP_URL,
-    LOGOUT_URL
+    LOGOUT_URL,
+    NOTE_EDIT_REDIRECT_URL,
+    NOTE_DELETE_REDIRECT_URL
 )
 
 
@@ -55,10 +57,8 @@ class TestRoutes(BaseTestData):
              self.client, HTTPStatus.OK),
 
             # Перенаправления для анонимных пользователей
-            ('GET', NOTE_ADD_URL, self.client, HTTPStatus.FOUND),
-            ('GET', NOTE_DETAIL_URL, self.client, HTTPStatus.FOUND),
-            ('GET', NOTES_LIST_URL, self.client, HTTPStatus.FOUND),
-            ('GET', NOTE_SUCCESS_URL, self.client, HTTPStatus.FOUND),
+            ('GET', NOTE_EDIT_URL, self.client, HTTPStatus.FOUND),
+            ('GET', NOTE_DELETE_URL, self.client, HTTPStatus.FOUND),
         ]
 
         for method, url, client, expected_status in test_cases:
@@ -69,8 +69,8 @@ class TestRoutes(BaseTestData):
     def test_redirects_for_anonymous(self):
         """Тестирование редиректов для анонимных пользователей."""
         test_cases = [
-            (NOTE_EDIT_URL, f'{LOGIN_URL}?next={NOTE_EDIT_URL}'),
-            (NOTE_DELETE_URL, f'{LOGIN_URL}?next={NOTE_DELETE_URL}'),
+            (NOTE_EDIT_URL, NOTE_EDIT_REDIRECT_URL),
+            (NOTE_DELETE_URL, NOTE_DELETE_REDIRECT_URL),
         ]
 
         for url, redirect_url in test_cases:

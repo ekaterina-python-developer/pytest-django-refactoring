@@ -15,7 +15,12 @@ class TestNotesListForDifferentUsers(BaseTestData):
         """Автор видит свою заметку в списке."""
         response = self.author_client.get(NOTES_LIST_URL)
         self.assertIn(self.note, response.context['object_list'])
-        note_from_response = response.context['object_list'][0]
+        note_from_response = next(
+            (note for note in response.context['object_list']
+             if note.slug == self.note.slug),
+            None
+        )
+        self.assertIsNotNone(note_from_response)
         self.assertEqual(note_from_response.title, self.note.title)
         self.assertEqual(note_from_response.text, self.note.text)
         self.assertEqual(note_from_response.slug, self.note.slug)

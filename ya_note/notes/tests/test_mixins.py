@@ -26,6 +26,9 @@ LOGOUT_URL = reverse('users:logout')
 NOTE_EDIT_URL = reverse('notes:edit', args=[NOTE_SLUG])
 NOTE_DELETE_URL = reverse('notes:delete', args=[NOTE_SLUG])
 
+NOTE_EDIT_REDIRECT_URL = f'{LOGIN_URL}?next={NOTE_EDIT_URL}'
+NOTE_DELETE_REDIRECT_URL = f'{LOGIN_URL}?next={NOTE_DELETE_URL}'
+
 
 class BaseTestData(TestCase):
     """Базовый класс для тестовых данных."""
