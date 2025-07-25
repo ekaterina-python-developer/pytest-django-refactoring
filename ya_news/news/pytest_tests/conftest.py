@@ -11,7 +11,7 @@ from news.models import Comment, News
 
 
 @pytest.fixture(autouse=True)
-def create_news():
+def news_batch():
     """Создание тестовых новостей для главной страницы."""
     News.objects.bulk_create(
         News(title=f'Новость {index}', text='Просто текст.',
@@ -52,12 +52,6 @@ def reader_client(reader):
     client = Client()
     client.force_login(reader)
     return client
-
-
-@pytest.fixture
-def anonymous_client():
-    """Фикстура для анонимного клиента без рекурсии."""
-    return Client()
 
 
 @pytest.fixture
