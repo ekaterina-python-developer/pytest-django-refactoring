@@ -56,8 +56,24 @@ YaNews - это новостной сайт с системой комменти
 
 ## Установка и запуск
 
-### 1. Клонирование репозитория
-```bash
+# Клонирование проекта
 git clone git@github.com:dariazueva/ya_news.git
 cd ya_news
+
+# Создание виртуального окружения
+python -m venv env
+source env/bin/activate  # Linux/macOS
+# или
+env\Scripts\activate     # Windows
+
+# Установка зависимостей
+pip install -r requirements.txt
+
+# Настройка базы данных
+python manage.py migrate
+python manage.py loaddata news.json
+
+# Запуск тестов
+pytest
+
 
